@@ -5,11 +5,12 @@ using CPLEX
 const OPTIMAL = JuMP.MathOptInterface.OPTIMAL
 const INFEASIBLE = JuMP.MathOptInterface.INFEASIBLE
 const UNBOUNDED = JuMP.MathOptInterface.DUAL_INFEASIBLE
-const M = Int(1e6)
+const M = Int(100000)
 
 
 function Lsp_solv(data)
     m = Model(CPLEX.Optimizer)
+    set_silent(m)
     l = data["l"]
     n = data["n"]
     u = data["u"]
@@ -62,6 +63,7 @@ end
 
 function Lsp_solv_heu(data, SC)
     m = Model(CPLEX.Optimizer)
+    set_silent(m)
     l = data["l"]
     n = data["n"]
     u = data["u"]
@@ -111,5 +113,5 @@ function Lsp_solv_heu(data, SC)
         #println()
     end
 
-    return JuMP.value.(z), JuMP.objective_value(m)
+    return JuMP.value.(z), JuMP.objective_value(m) - sum([SC[i, t] * JuMP.value.(z[i, t]) for i in 1:n for t in 1:l])
 end

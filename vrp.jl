@@ -11,6 +11,7 @@ const UNBOUNDED = JuMP.MathOptInterface.DUAL_INFEASIBLE;
 
 function Vrp_local(data, type, Nc, m, t)
     mod = Model(CPLEX.Optimizer)
+    set_silent(mod)
     Q = data["Q"]
     d = data["d"][:, t]
     inds = append!([0], [i for i in 1:length(Nc[:, t]) if Nc[i, t] == 1])

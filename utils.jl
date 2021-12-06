@@ -2,7 +2,7 @@ using LinearAlgebra
 using LightGraphs, SimpleWeightedGraphs, Cairo, Compose, Fontconfig, Colors
 using GraphPlot
 
-const MCOLORS = [colorant"red", colorant"blue", colorant"green", colorant"yellow", colorant"orange", colorant"purple"]
+const MCOLORS = [colorant"red", colorant"blue", colorant"green", colorant"yellow", colorant"orange", colorant"purple", colorant"tan", colorant"pink", colorant"cyan", colorant"silver"]
 
 
 function Read_data(path)

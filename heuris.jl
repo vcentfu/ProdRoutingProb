@@ -2,6 +2,8 @@ using CPUTime
 include("utils.jl")
 include("lsp.jl")
 include("vrp.jl")
+include("genetics.jl")
+
 
 
 function Heuris(path, m)
@@ -18,7 +20,14 @@ function Heuris(path, m)
     vrp = []
 
     for p in 1:data["l"]
-        rvrp, rval = Vrp_local(data, type, Nc, m, p)
+        if size(data["d"])[1] <= 14
+            rvrp, rval = Vrp_local(data, type, Nc, m, p)
+            #println("vrp local = ", rval)
+        else
+            rvrp, rval = Launch_GA(data, type, Nc, m, p, 200, 100, 200)
+            #println("vrp gacal = ", rval)
+        end
+
         push!(vrp, rvrp)
     end
 
@@ -33,7 +42,14 @@ function Heuris(path, m)
         ri = 0
 
         for p in 1:data["l"]
-            rvrp, rval = Vrp_local(data, type, Nc, m, p)
+            if size(data["d"])[1] <= 14
+                rvrp, rval = Vrp_local(data, type, Nc, m, p)
+                #println("vrp local = ", rval)
+            else
+                rvrp, rval = Launch_GA(data, type, Nc, m, p, 200, 100, 200)
+                #println("vrp gacal = ", rval)
+            end
+
             ri = ri + rval
             push!(vrp, rvrp)
         end
@@ -58,13 +74,14 @@ function Heuris(path, m)
     #println("i = ", indx)
     #println(tt)
 
+    println(tt)
     indm = argmin(tt)
     pvrp = tvrp[indm]
 
     for i in 1:length(pvrp)
         Draw_vrp(path, data, pvrp[i], i, "heu")
     end
-
+    #println(tt[indm])
     return tt[indm]
 end
 
@@ -77,12 +94,16 @@ function Read_inst_pdi_heu(s, m)
             x = split(ldir[i], ".")
             t0 = CPUtime_us()
             tmin = Heuris(ldir[i], m)
+            #println("heu ", tmin)
             t1 = CPUtime_us()
 
             open(string("./Results/PDI_heu_", x[1], "/", "PDI_heu_", x[1], ".log"), "w") do f
-                write(f, string("Execution time : ", (t1 - t0) / 1e6, " s\n"))
-                write(f, string("Objective value : ", tmin, "\n"))
+                write(f, string("t Execution time : ", (t1 - t0) / 1e6, " s\n"))
+                #println("heu file", tmin)
+                write(f, string("o Objective value : ", tmin, "\n"))
             end
+
+            println(ldir[i], " checked")
         end
     end
 end
