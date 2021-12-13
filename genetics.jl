@@ -104,7 +104,7 @@ end
 function Mate(i1)
     res = copy(i1)
     r = rand([i for i in 1:length(i1)])
-    rv = [i for i in 1: length(i1) if !(i in [r - 1, r, r + 1])]
+    rv = [i for i in 1: length(i1) if !(i in [r])]
 
     if length(rv) != 0
         s = rand(rv)
@@ -130,7 +130,7 @@ function Seperation(data, i1, v1, m)
         end
 
         if cm == 0
-            println([i for i in 1:length(res) if res[i] == 0])
+            #println([i for i in 1:length(res) if res[i] == 0])
             println("pas assez de voitures")
             return []
         end
@@ -207,11 +207,21 @@ function Launch_GA(data, type, Nc, m, t, lamb, mu, ngen)
     for j in 1:ngen
         offspring = []
         for i in 1:div(lamb, 2)
+
             p1 = rand(population)
             p2 = rand(population)
 
             t1 = Meta_vrp(p1)
             t2 = Meta_vrp(p2)
+
+            while length(t1) == 0 || length(t2) == 0
+                p1 = rand(population)
+                p2 = rand(population)
+
+                t1 = Meta_vrp(p1)
+                t2 = Meta_vrp(p2)
+            end
+
             e1, e2 = Order_crossover(t1, t2)
 
             if rand() < 0.5
@@ -235,12 +245,19 @@ function Launch_GA(data, type, Nc, m, t, lamb, mu, ngen)
         rmin = pr[imin]
         dmin = pd[imin]
         pFitness = [Fitness(data, type, offspring[i], v1, rmin, dmin) for i in 1:length(offspring)]
-        best = sort([(pFitness[i], i) for i in 1:length(offspring)])
+        best = sort([(pFitness[i], i) for i in 1:length(offspring) if pFitness[i] != 0])
         population = []
 
         for i in 1:mu
             push!(population, offspring[best[i][2]])
+
+            if i == length(best)
+                break
+            end
         end
+
+        population = [ind for ind in population if ind != []]
+
     end
 
     pd = [Distance_vrp(data, type, population[i], v1) for i in 1:length(population)]

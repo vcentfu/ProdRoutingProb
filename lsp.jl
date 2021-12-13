@@ -10,7 +10,7 @@ const M = Int(100000)
 
 function Lsp_solv(data)
     m = Model(CPLEX.Optimizer)
-    set_silent(m)
+    #set_silent(m)
     l = data["l"]
     n = data["n"]
     u = data["u"]
@@ -77,7 +77,7 @@ function Lsp_solv_heu(data, SC)
     @variable(m, q[1:n, 1:l] >= 0)
     @variable(m, z[1:n, 1:l], Bin)
 
-    @objective(m, Min, sum([u * p[t] + f * y[t] + sum([h[i] * I[i + 1, t] for i in 1:n]) for t in 1:l]) + sum([SC[i, t] * z[i, t] for i in 1:n for t in 1:l]))
+    @objective(m, Min, sum([u * p[t] + f * y[t] + sum([h[i] * I[i, t] for i in 1:n + 1]) for t in 1:l]) + sum([SC[i, t] * z[i, t] for i in 1:n for t in 1:l]))
 
     @constraint(m, caz, data["L0"][1] + p[1] == sum(q[1:n, 1]) + I[1, 1])
     @constraint(m, ca[t in 1:l - 1], I[1, t] + p[t + 1] == sum(q[1:n, t + 1]) + I[1, t + 1])

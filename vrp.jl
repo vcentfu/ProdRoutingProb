@@ -11,7 +11,9 @@ const UNBOUNDED = JuMP.MathOptInterface.DUAL_INFEASIBLE;
 
 function Vrp_local(data, type, Nc, m, t)
     mod = Model(CPLEX.Optimizer)
-    set_silent(mod)
+    #set_optimizer_attribute(mod, "CPX_PARAM_TILIM" , 45)
+    #set_silent(mod)
+
     Q = data["Q"]
     d = data["d"][:, t]
     inds = append!([0], [i for i in 1:length(Nc[:, t]) if Nc[i, t] == 1])
@@ -32,9 +34,9 @@ function Vrp_local(data, type, Nc, m, t)
     end
 
     if type == "A"
-        @objective(mod, Min, sum([Distance_A(data, inds[i] + 1, inds[j] + 1) * x[i, j] for i in 1:r + 1 for j in 1:r + 1]))
+        @objective(mod, Min, sum([Distance_A(data, inds[i] + 1, inds[j] + 1) * x[i, j] for i in 1:r + 1 for j in 1:r + 1 if i != j]))
     elseif type == "B"
-        @objective(mod, Min, sum([Distance_B(data, inds[i] + 1, inds[j] + 1) * x[i, j] for i in 1:r + 1 for j in 1:r + 1]))
+        @objective(mod, Min, sum([Distance_B(data, inds[i] + 1, inds[j] + 1) * x[i, j] for i in 1:r + 1 for j in 1:r + 1 if i != j]))
     end
 
     @constraint(mod, ca, sum(x[1, 2:r + 1]) <= m)

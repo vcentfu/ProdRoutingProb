@@ -127,7 +127,7 @@ function Update_SC(data, type, vrp)
 end
 
 
-function Draw_vrp(path, data, vrp, tp, opts)
+function Draw_vrp(path, data, vrp, tp, opts, root_name = "Results")
     n = data["n"] + 1
     g = DiGraph(n)
     xvrp = copy(vrp)
@@ -203,20 +203,92 @@ function Draw_vrp(path, data, vrp, tp, opts)
         nodec[k] = colorant"orange"
     end
 
-    if !ispath("./Results")
-        mkdir("./Results")
+    if !ispath(string("./", root_name))
+        mkdir(string("./", root_name))
+    end
+
+    if !ispath(string("./", root_name, "/", opts))
+        mkdir(string("./", root_name, "/", opts))
     end
 
     testname = split(path, ".")
     file = string("PDI_", opts)
 
-    if !ispath(string("./Results/", file, "_", testname[1]))
-        mkdir(string("./Results/", file,  "_", testname[1]))
+    if !ispath(string("./", root_name, "/", opts, "/", file, "_", testname[1]))
+        mkdir(string("./", root_name, "/", opts, "/", file,  "_", testname[1]))
     end
 
-    draw(PDF(string("./Results/", file, "_", testname[1], "/", "VRP_", opts, "_", testname[1], "_", "p", tp, ".pdf"), 16cm, 16cm), gplot(g, tx, ty, nodelabel = 1:nv(g), edgestrokec = ecolors, nodefillc = nodec))
+    draw(PDF(string("./", root_name, "/", opts, "/", file, "_", testname[1], "/", "VRP_", opts, "_", testname[1], "_", "p", tp, ".pdf"), 16cm, 16cm), gplot(g, tx, ty, nodelabel = 1:nv(g), edgestrokec = ecolors, nodefillc = nodec))
 
     return
+end
+
+
+function Detect_subtour(vrp)
+    xvrp = copy(vrp)
+    t = []
+    f = true
+    r = -1
+    res = []
+
+    while f
+        f = false
+        mt = [0]
+
+        for (i, j) in xvrp
+            if i == 0
+                push!(mt, j)
+                deleteat!(xvrp, findall(x -> x == (i, j), xvrp))
+                f = true
+                break
+            end
+        end
+
+        if f
+            while mt[end] != 0
+                for (i, j) in xvrp
+                    if i == mt[end]
+                        push!(mt, j)
+                        deleteat!(xvrp, findall(x -> x == (i, j), xvrp))
+                        break
+                    end
+                end
+            end
+
+        push!(t, mt)
+        end
+    end
+
+
+    while length(xvrp) != 0
+        i, j = xvrp[1]
+        vt = [i]
+        f = false
+
+        while !f
+            xvrp2 = copy(xvrp)
+
+            for (i, j) in xvrp2
+                if i == vt[end]
+                    push!(vt, j)
+                    deleteat!(xvrp, findall(x -> x == (i, j), xvrp))
+                end
+
+                if vt[1] == vt[end]
+                    f = true
+                    break
+                end
+            end
+        end
+
+        #if vt[1] == 0
+        #    vt = vt[2:end]
+        #end
+
+        push!(res, vt)
+    end
+
+    return t, res
 end
 
 

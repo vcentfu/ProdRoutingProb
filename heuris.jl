@@ -6,7 +6,7 @@ include("genetics.jl")
 
 
 
-function Heuris(path, m)
+function Heuris(path, m, root_name = "Results")
     data = Read_data(path)
 
     if occursin("A_", path)
@@ -74,12 +74,12 @@ function Heuris(path, m)
     #println("i = ", indx)
     #println(tt)
 
-    println(tt)
+    #println(tt)
     indm = argmin(tt)
     pvrp = tvrp[indm]
 
     for i in 1:length(pvrp)
-        Draw_vrp(path, data, pvrp[i], i, "heu")
+        Draw_vrp(path, data, pvrp[i], i, "heu", root_name)
     end
     #println(tt[indm])
     return tt[indm]
@@ -97,7 +97,7 @@ function Read_inst_pdi_heu(s, m)
             #println("heu ", tmin)
             t1 = CPUtime_us()
 
-            open(string("./Results/PDI_heu_", x[1], "/", "PDI_heu_", x[1], ".log"), "w") do f
+            open(string("./Results/heu/PDI_heu_", x[1], "/", "PDI_heu_", x[1], ".log"), "w") do f
                 write(f, string("t Execution time : ", (t1 - t0) / 1e6, " s\n"))
                 #println("heu file", tmin)
                 write(f, string("o Objective value : ", tmin, "\n"))
