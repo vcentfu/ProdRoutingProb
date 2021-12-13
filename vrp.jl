@@ -10,6 +10,18 @@ const UNBOUNDED = JuMP.MathOptInterface.DUAL_INFEASIBLE;
 
 
 function Vrp_local(data, type, Nc, m, t)
+
+    """ Dict{String : Float} * String * Matrix{Float} * Int * Int -> Array[Tuple(Int, Int)] * Cplex.Objective_value
+
+        data : Les donnees extraits d'une instance PRP (cf. function read_data dans utils.jl).
+        type : Le type d'instance "A" ou "B".
+        Nc : Une matrice binaire representant les revendeurs a livrer pour chaque periode
+        m : Le nombre de vehicule maximal
+        t : La periode etudiee pour le VRP.
+
+        Retourne une tournee optimale (realisable) pour le vrp.
+    """
+
     mod = Model(CPLEX.Optimizer)
     #set_optimizer_attribute(mod, "CPX_PARAM_TILIM" , 45)
     #set_silent(mod)

@@ -12,6 +12,16 @@ include("utils.jl")
 
 
 function Pdi_exact_ne(data, type, m)
+
+    """ Dict{String : Float} * String * Int -> Array[Tuple(Int, Int)] * Cplex.Objective_value * Cplex.Relative_gap * Int * Int
+
+        data : Les donnees extraits d'une instance PRP (cf. function read_data dans utils.jl).
+        type : Le type d'instance "A" ou "B".
+        m : Le nombre de vehicule maximal
+
+        Retourne une tournee optimale (realisable) pour le PRP par methode exacte (branch and cut) et ainsi que ses caracteristiques (distance, gap, nombre de cuts).
+    """
+
     mod = Model(CPLEX.Optimizer)
     #set_silent(mod)
     if data["n"] <= 14
@@ -186,7 +196,7 @@ function Pdi_exact_ne(data, type, m)
                     MOI.submit(mod, MOI.LazyConstraint(cb_data), con)
                     nbaddc = nbaddc + 1
                 end
-            end 
+            end
 
             for S in lS2
                 if FCCs(S, t)
@@ -259,6 +269,15 @@ end
 
 
 function Read_inst_pdi_exact_ne(s, m)
+
+    """ String * Int -> Void
+
+        s : Une sous chaine des noms d'instances a executer
+        m : Le nombre maximal de vehicules
+
+        Lance la resolution exacte (branch and cut) pour toute les instances ayant pour sous chaine s.
+    """
+
     ldir = readdir("./PRP_instances/")
 
     for i in 1:length(ldir)

@@ -3,6 +3,15 @@ include("exact.jl")
 
 
 function Provide_full_results(s, m)
+
+    """ String * Int -> Void
+
+        s : Une sous chaine des noms d'instances a executer
+        m : Le nombre maximal de vehicules
+
+        Lance la resolution heuritique en deux phases et la resolution exacte (branch and cut) pour toute les instances ayant pour sous chaine s.
+    """
+
     ldir = readdir("./PRP_instances/")
 
     for i in 1:length(ldir)
@@ -39,10 +48,19 @@ end
 
 
 function Provide_class_results(s, m)
+
+    """ String * Int -> Void
+
+        s : Une sous chaine des noms d'instances a executer
+        m : Le nombre maximal de vehicules
+
+        Lance la resolution heuritique en deux phases et la resolution exacte (branch and cut) pour toute les instances par classe ayant pour sous chaine s.
+    """
+
     ldir = readdir("./PRP_instances/")
 
     for i in 1:length(ldir)
-        """if occursin(s, ldir[i]) && (occursin("ABS12", ldir[i]) || occursin("ABS36", ldir[i]) || occursin("ABS60", ldir[i]) || occursin("ABS84", ldir[i]))
+        if occursin(s, ldir[i]) && (occursin("ABS12", ldir[i]) || occursin("ABS36", ldir[i]) || occursin("ABS60", ldir[i]) || occursin("ABS84", ldir[i]))
             x = split(ldir[i], ".")
             t0 = CPUtime_us()
             tmin = Heuris(ldir[i], m)
@@ -54,7 +72,7 @@ function Provide_class_results(s, m)
             end
 
             println(ldir[i], " heuristic checked")
-        end"""
+        end
 
         if occursin(s, ldir[i]) && (occursin("ABS12", ldir[i]) || occursin("ABS36", ldir[i]) || occursin("ABS60", ldir[i]) || occursin("ABS84", ldir[i]))
             x = split(ldir[i], ".")

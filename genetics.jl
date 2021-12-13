@@ -12,6 +12,15 @@ const UNBOUNDED = JuMP.MathOptInterface.DUAL_INFEASIBLE;
 
 
 function Init_vrp(Nc, t)
+
+    """ Matrix{Float} * Int -> Array{Int} * Array{Int}
+
+        Nc : Une matrice binaire representant les revendeurs a livrer pour chaque periode
+        t : La periode etudiee
+
+        Retourne une meta tournee d'indices de sommets ainsi que les sommets a livrer.
+    """
+
     vals  = [i for i in 1:length(Nc[:, t]) if Nc[i, t] == 1]
     inds = shuffle!([i for i in 1:length(vals)])
 
@@ -20,27 +29,28 @@ end
 
 
 function Meta_vrp(res)
+
+    """ Array{Int} -> Array{Int}
+
+        res : Une tournee realisable d'indices de sommets
+
+        Retourne une meta-tournee d'indices de sommets de res.
+    """
+
     return [k for k in res if k != 0]
 end
 
 
-function Inci_vrp(res)
-    inci_res = [0 for i in 1:maximum(res)]
-    tour = 1
-
-    for k in res[2:end]
-        if k != 0
-            inci_res[k] = tour
-        else
-            tour = tour + 1
-        end
-    end
-
-    return inci_res
-end
-
-
 function Classic_crossover(p1, p2)
+
+    """ Array{Int} * Array{Int} -> Array{Int} * Array{Int}
+
+        p1 : Une meta-tournee parent 1 d'indices de sommets
+        p2 : Une meta-tournee parent 2 d'indices de sommets
+
+        Retourne deux meta-tournees enfants d'indices de sommets issus de p1 et p2 par un croissement classique.
+    """
+
     e1 = copy(p1)
     e2 = copy(p2)
     cs = div(length(p1), 3)
@@ -61,6 +71,15 @@ end
 
 
 function Order_crossover(p1, p2)
+
+    """ Array{Int} * Array{Int} -> Array{Int} * Array{Int}
+
+        p1 : Une meta-tournee parent 1 d'indices de sommets
+        p2 : Une meta-tournee parent 2 d'indices de sommets
+
+        Retourne deux meta-tournees enfants d'indices de sommets issus de p1 et p2 par un order crossover OX.
+    """
+
     e1 = copy(p1)
     e2 = copy(p2)
     cs = div(length(p1), 3)
@@ -102,6 +121,14 @@ end
 
 
 function Mate(i1)
+
+    """ Array{Int} -> Array{Int}
+
+        i1 : Une meta-tournee
+
+        Retourne un meta-tournee mutee d'indices de sommets par une permutation de sommets 2 opt.
+    """
+
     res = copy(i1)
     r = rand([i for i in 1:length(i1)])
     rv = [i for i in 1: length(i1) if !(i in [r])]
@@ -118,6 +145,17 @@ end
 
 
 function Seperation(data, i1, v1, m)
+
+    """ Dict{String : Float} * Array{Int} * Array{Int} * Int -> Array{Int}
+
+        data : Les donnees extraits d'une instance PRP (cf. function read_data dans utils.jl).
+        i1 : Une meta-tournee parent 1 d'indices de sommets
+        v1 : Les sommets a livrer associes aux indices i1
+        m : Le nombre de vehicule maximal
+
+        Retourne deux tournees realisables sous contraintes de charge de vehicule et du nombre de vehicules.
+    """
+
     res = [0]
     c = 0
     cm = m - 1
@@ -145,7 +183,19 @@ function Seperation(data, i1, v1, m)
 end
 
 
-function Distance_vrp(data, type, i1, v1)
+function Distance_vrp(data, type, vrp, v1)
+
+    """ Dict{String : Float} * String * Array{Int} * Array{Int} -> Float
+
+        data : Les donnees extraits d'une instance PRP (cf. function read_data dans utils.jl).
+        type : Le type de l'instance etudiee "A" ou "B"
+        vrp : Une tournee realisable sous forme de liste d'indices avec depot
+        v1 : Les sommets a livrer associes aux indices de vrp
+
+        Retourne la distance parcourue par vrp.
+    """
+
+
     res = 0
 
     for i in 2:length(i1)
@@ -175,6 +225,14 @@ end
 
 
 function Computes_r(vrp)
+
+    """ Array{Int} -> Int
+
+        vrp : Une tournee realisable sous forme de liste d'indices avec depot
+
+        Retourne le nombre de vehicule utilise dans la tournee.
+    """
+
     r = length([k for k in vrp if k == 0]) - 1
 
     return r
@@ -183,6 +241,19 @@ end
 
 
 function Fitness(data, type, vrp, v1, rmin, dmin)
+
+    """ Dict{String : Float} * String * Array{Int} * Array{Int} * Float * Float -> Float
+
+        data : Les donnees extraits d'une instance PRP (cf. function read_data dans utils.jl).
+        type : Le type de l'instance etudiee "A" ou "B"
+        vrp : Une tournee realisable
+        v1 : Les sommets a livrer associes aux indices de vrp
+        rmin : Le nombre de vehicule minimal utilise dans le meilleur individu de la population courante
+        dmin : La distance parcourue minimale dans le meilleur individu de la population courante
+
+        Retourne le fitness defini par Berger et al (1998) pour le VRP.
+    """
+
     r = Computes_r(vrp)
     dvrp = Distance_vrp(data, type, vrp, v1)
 
@@ -191,10 +262,25 @@ end
 
 
 function Launch_GA(data, type, Nc, m, t, lamb, mu, ngen)
+
+    """ Dict{String : Float} * String * Matrix{Float} * Int * Int * Int * Int * Int -> Array[Tuple(Int, Int)] * FLoat
+
+        data : Les donnees extraits d'une instance PRP (cf. function read_data dans utils.jl).
+        type : Le type de l'instance etudiee "A" ou "B"
+        Nc : Une matrice binaire representant les revendeurs a livrer pour chaque periode
+        m : Le nombre de vehicule maximal
+        t : La periode etudiee pour le VRP.
+        lamb : La taille de la population
+        mu : La taille de la population apres selection naturelle (offspring)
+        ngen : Le nombre de generation
+
+        Retourne une tournee realisable par evolution genetique ainsi que sa distance parcourue.
+    """
+
     v1 = Init_vrp(Nc, t)[2]
     population = [Init_vrp(Nc, t)[1] for i in 1:lamb]
-    population = [ind for ind in population if ind != []]
     population = [Seperation(data, population[i], v1, m) for i in 1:length(population)]
+    population = [ind for ind in population if ind != []]
 
     if length(population) == 0
         println("Pas assez de voitures, pas besoin de voitures")
@@ -206,6 +292,7 @@ function Launch_GA(data, type, Nc, m, t, lamb, mu, ngen)
 
     for j in 1:ngen
         offspring = []
+
         for i in 1:div(lamb, 2)
 
             p1 = rand(population)
@@ -285,4 +372,5 @@ e1, e2 = Order_crossover(t1, t2)
 e3 = Mate(e1)
 r4 = Seperation(data, e3, te1, 10)
 Distance_vrp(data, "A", r4, te1)
-x1, x2 = Launch_GA(data, "A", Nc, 10, 2, 200, 100, 200)"""
+x1, x2 = Launch_GA(data, "A", Nc, 10, 2, 200, 100, 200)
+"""

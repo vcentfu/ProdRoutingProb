@@ -7,6 +7,16 @@ include("genetics.jl")
 
 
 function Heuris(path, m, root_name = "Results")
+
+    """ String * Int * String -> Float
+
+        path : Le nom du fichier a extraire sans le / a la fin en incluant son extension
+        m : Le nombre maximal de vehicules
+        root_name : Le nom du dossier ou placer ces resultats.
+
+        Retourne la valeur approchee pour le PRP et dessine ses tournees.
+    """
+
     data = Read_data(path)
 
     if occursin("A_", path)
@@ -87,6 +97,15 @@ end
 
 
 function Read_inst_pdi_heu(s, m)
+
+    """ String * Int -> Void
+
+        s : Une sous chaine des noms d'instances a executer
+        m : Le nombre maximal de vehicules
+
+        Lance la resolution heuritique en deux phases pour toute les instances ayant pour sous chaine s.
+    """
+
     ldir = readdir("./PRP_instances/")
 
     for i in 1:length(ldir)

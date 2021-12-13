@@ -6,6 +6,14 @@ const MCOLORS = [colorant"red", colorant"blue", colorant"green", colorant"yellow
 
 
 function Read_data(path)
+
+    """ String -> Dict{String : Float}
+
+        path : Le nom du fichier a extraire sans le / a la fin en incluant son extention
+
+        Retourne un dictionnaire representant les donnees de path.
+    """
+
     data = Dict()
     nend = false
 
@@ -58,6 +66,15 @@ end
 
 
 function Distance_A(data, i, j)
+
+    """ Dict{String : Float} * Int * Int -> Float
+
+        data : Les donnees extraits d'une instance PRP (cf. function Read_data).
+        i : Le sommet de individu i en supposant que les indices vont de 1 à n + 1 (1 fournisseur n revendeurs)
+
+        Retourne la distance de type A de i a j.
+    """
+
     x = data["x"]
     y = data["y"]
 
@@ -66,6 +83,16 @@ end
 
 
 function Distance_B(data, i, j)
+
+    """ Dict{String : Float} * Int * Int -> Float
+
+        data : Les donnees extraits d'une instance PRP (cf. function Read_data).
+        i : Le sommet de individu i en supposant que les indices vont de 1 à n + 1 (1 fournisseur n revendeurs)
+        j : Le sommet de individu j en supposant que les indices vont de 1 à n + 1 (1 fournisseur n revendeurs)
+
+        Retourne la distance de type B de i a j.
+    """
+
     x = data["x"]
     y = data["y"]
     mc = data["mc"]
@@ -75,6 +102,15 @@ end
 
 
 function Initialize_SC(data, type)
+
+    """ Dict{String : Float} * String -> Matrix{Float}
+
+        data : Les donnees extraits d'une instance PRP (cf. function Read_data).
+        type : Le type d'instance "A" ou "B".
+
+        Retourne une Matrice representant les couts de distances heuristiques de type type pour data.
+    """
+
     n = data["n"]
     l = data["l"]
     res = zeros(Float64, n, l)
@@ -94,6 +130,16 @@ end
 
 
 function Update_SC(data, type, vrp)
+
+    """ Dict{String : Float} * String * Array[Tuple(Int, Int)] -> Matrix{Float}
+
+        data : Les donnees extraits d'une instance PRP (cf. function read_data).
+        type : Le type d'instance "A" ou "B".
+        vrp : Une liste d'arcs representant une tournee realisable (cf. function Vrp_local dans vrp.jl)
+
+        Retourne la matrice des couts heuristiques mise a jour par vrp.
+    """
+
     n = data["n"]
     l = data["l"]
     res = zeros(Float64, n, l)
@@ -128,6 +174,19 @@ end
 
 
 function Draw_vrp(path, data, vrp, tp, opts, root_name = "Results")
+
+    """ String * Dict{String : Float} * Array[Tuple(Int, Int)] * Int * String * String -> Void
+
+        path : Le nom du fichier a etudier sans le / a la fin et en incluant son extention (.prp).
+        data : Les donnees extraits d'une instance PRP (cf. function Read_data).
+        vrp : Une liste d'arcs representant une tournee realisable de la periode tp (cf. function Vrp_local dans vrp.jl)
+        tp : La periode etudiee
+        opts : Le nom de la methode utilisee (heu ou exact)
+        root_name : Le nom du dossier ou placer ces resultats.
+
+        Dessine le vrp de la periode tp sous forme de graphe.
+    """
+
     n = data["n"] + 1
     g = DiGraph(n)
     xvrp = copy(vrp)
@@ -289,33 +348,4 @@ function Detect_subtour(vrp)
     end
 
     return t, res
-end
-
-
-function Partition_s2(l)
-    res = []
-
-    for k in l
-        ti = length(res)
-
-        for i in 1:ti
-            ts = deepcopy(res[i])
-            push!(ts, k)
-            push!(res, ts)
-        end
-
-        push!(res, [k])
-    end
-
-    push!(res, [])
-
-    fres = []
-
-    for tres in res
-        if length(tres) >= 2
-            push!(fres, tres)
-        end
-    end
-
-    return fres
 end

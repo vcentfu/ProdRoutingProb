@@ -9,6 +9,14 @@ const M = Int(100000)
 
 
 function Lsp_solv(data)
+
+    """ Dict{String : Float} ->
+
+        data : Les donnees extraits d'une instance PRP (cf. function read_data dans utils.jl).
+
+        Retourne la solution optimale du LSP pour data.
+    """
+
     m = Model(CPLEX.Optimizer)
     #set_silent(m)
     l = data["l"]
@@ -62,6 +70,14 @@ end
 
 
 function Lsp_solv_heu(data, SC)
+
+    """ Dict{String : Float} * Matrix{Float} -> Matrix{Float} * Cplex.Objective_value
+
+        data : Les donnees extraits d'une instance PRP (cf. function read_data dans utils.jl).
+
+        Retourne la solution optimale privee des couts heuristiques du LSP modifie pour data ainsi que la matrice des revendeurs a livrer.
+    """
+
     m = Model(CPLEX.Optimizer)
     set_silent(m)
     l = data["l"]
