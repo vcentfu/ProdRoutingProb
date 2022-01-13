@@ -1,4 +1,4 @@
-# Production_Routing_Problem
+#  Optimisation combinatoire pour le *Production Routing Problem*
 
 Dans le cadre du projet en optimisation combinatoire, le projet consiste à résoudre le PRP par des méthodes heuristiques et exactes.  
 
