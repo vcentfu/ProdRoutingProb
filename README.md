@@ -25,3 +25,4 @@ Vincent Fu : vincent.fu@etu.sorbonne-universite.fr
   
 ![Exemple de solution pour le VRP](./Results/exact/PDI_exact_A_050_ABS12_50_5/VRP_exact_A_050_ABS12_50_5_p5.pdf)
 <embled src="./Results/exact/PDI_exact_A_050_ABS12_50_5/VRP_exact_A_050_ABS12_50_5_p5.pdf" type="application/pdf" width="100%">
+</object>
