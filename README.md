@@ -23,4 +23,4 @@ Les résultats (les logs et les graphes de chemins pour les VRP) seront placés 
 Pour tout question sur le fonctionnement du repository, veuillez envoyer un mail à :  
 Vincent Fu : vincent.fu@etu.sorbonne-universite.fr  
   
-![Exemple de solution pour le VRP](./PDI_exact_A_050_ABS12_50_5/VRP_exact_A_050_ABS12_50_5_p5.jpg)
+![Exemple de solution pour le VRP](./VRP_exact_A_050_ABS12_50_5_p5.jpg)
