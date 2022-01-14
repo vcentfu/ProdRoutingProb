@@ -10,13 +10,13 @@ Pour pouvoir lancer les fonctions, veuillez installer Julia et Cplex.
 
 Pour obtenir tous les résultats des instances de type A pour 6 véhicules:  
 • Lancez Julia sur un terminal ayant le path sur le production_routing_problem  
-• Entrez sur le terminal : include("main.jl")
+• Entrez sur le terminal : include("main.jl")  
 • Puis entrez : Provide_full_results("A", 6)  
 Les résultats (les logs et les graphes de chemins pour les VRP) seront placés dans le dossier Example_results.  
 
 Pour obtenir tous les résultats par classe des instances de type A pour 6 véhicules:  
 • Lancez Julia sur un terminal ayant le path sur le production_routing_problem  
-• Entrez sur le terminal : include("main.jl")
+• Entrez sur le terminal : include("main.jl")  
 • Puis entrez : Provide_class_results("A", 6)  
 Les résultats (les logs et les graphes de chemins pour les VRP) seront placés dans le dossier Results.  
 
