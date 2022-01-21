@@ -6,7 +6,7 @@ La documentation sur l'utilisation des fonctions sont dans les fichiers .jl. Mai
 
 Le rapport du projet est dans le fichier Rapport_MAOA_PRP_FU_LIU.pdf  
   
-Pour pouvoir lancer les fonctions, veuillez installer Julia et Cplex.
+Pour pouvoir lancer les fonctions, veuillez installer Cplex.
 
 Pour obtenir tous les résultats des instances de type A pour 6 véhicules:  
 • Lancez Julia sur un terminal ayant le path sur le production_routing_problem  
